@@ -1,0 +1,24 @@
+﻿@using Core.Models
+@model OurTeam
+<div class="container">
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label  class="form-label" asp-for="Name">Name</label>
+            <input  class="form-control" asp-for="Name">
+           <span asp-validation-for="Name" style="color:red"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" asp-for="Position">Position</label>
+            <input class="form-control" asp-for="Position">
+            <span asp-validation-for="Position" style="color:red"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" asp-for="PhotoFile">PhotoFile</label>
+            <input class="form-control" asp-for="PhotoFile">
+            <span asp-validation-for="PhotoFile" style="color:red"></span>
+        </div>
+        <div asp-validation-summary="All"></div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
