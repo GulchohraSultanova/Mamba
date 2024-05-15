@@ -35,6 +35,7 @@ namespace Mamba.Areas.Admin.Controllers
                 UserName=registerDto.UserName
             };
             var result= await _userManager.CreateAsync(user,registerDto.Password);
+            Console.WriteLine("Salam");
             if(!result.Succeeded)
             {
                 foreach (var item in result.Errors)

@@ -92,7 +92,8 @@ namespace Bussiness.Concreters
                     {
                         team.PhotoFile.CopyTo(fileStream);
                     }
-                    team.ImgUrl = filename;
+                    oldTeam.ImgUrl = filename;
+                 
 
                 }
 
