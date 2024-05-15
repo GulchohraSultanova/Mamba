@@ -25,7 +25,8 @@ namespace Mamba.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(OurTeam ourTeam) { 
+        public IActionResult Create(OurTeam ourTeam)
+        {
             if (!ModelState.IsValid)
             {
                 return View();
@@ -36,14 +37,42 @@ namespace Mamba.Areas.Admin.Controllers
             }
             catch (NullException ex)
             {
-                ModelState.AddModelError("",ex.Message);
+                ModelState.AddModelError("", ex.Message);
             }
-            catch (FileContentTypeException ex) 
-            { 
+            catch (FileContentTypeException ex)
+            {
                 ModelState.AddModelError("", ex.Message);
             }
             return RedirectToAction("Index");
 
+        }
+        public IActionResult Delete(int id)
+        {
+            _teamService.Delete(id);
+            return RedirectToAction("Index");
+        }
+        public IActionResult Update(int id)
+        {
+            var updateteam = _teamService.Get(x => x.Id == id);
+            return View(updateteam);
+        }
+        [HttpPost]
+        public IActionResult Update(OurTeam team)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _teamService.Update(team.Id, team);
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return View(team);
         }
     }
 }

@@ -1,8 +1,10 @@
 using Bussiness.Abstracts;
 using Bussiness.Concreters;
+using Core.Models;
 using Core.RepositoryAbstracts;
 using Data.DAL;
 using Data.RepositoryConcreters;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mamba
@@ -15,6 +17,15 @@ namespace Mamba
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.User.RequireUniqueEmail = true;
+
+                opt.User.AllowedUserNameCharacters= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+              
+            }).AddEntityFrameworkStores<AppDbContext>();
             builder.Services.AddDbContext<AppDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
@@ -33,7 +44,9 @@ namespace Mamba
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+        
             app.MapControllerRoute(
             name: "areas",
             pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"

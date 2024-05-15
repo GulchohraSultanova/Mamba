@@ -2,6 +2,7 @@
 using Bussiness.Exceptions;
 using Core.Models;
 using Core.RepositoryAbstracts;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,24 +15,26 @@ namespace Bussiness.Concreters
     {
 
         IOurTeamRepository _ourTeamRepository;
-
-        public OurTeamService(IOurTeamRepository ourTeamRepository)
+        IWebHostEnvironment _webHostEnvironment;
+        public OurTeamService(IOurTeamRepository ourTeamRepository, IWebHostEnvironment webHostEnvironment)
         {
             _ourTeamRepository = ourTeamRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public void Create(OurTeam team)
         {
-           if(team.PhotoFile==null) {
+            if (team.PhotoFile == null)
+            {
                 throw new NullException("Photofile", "Null ola bilmez");
             }
             if (!team.PhotoFile.ContentType.Contains("image/"))
             {
                 throw new FileContentTypeException("PhotoFile", "Fayl formati duzgun deyil!");
             }
-            string filename=team.PhotoFile.FileName;
-            string path = "C:\\Users\\II novbe\\Desktop\\Mamba\\Mamba\\wwwroot\\Upload\\Service\\"+filename;
-            using(FileStream fileStream= new FileStream(path, FileMode.Create))
+            string filename = team.PhotoFile.FileName;
+            string path = _webHostEnvironment.WebRootPath + @"\Upload\Service\" + filename;
+            using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
                 team.PhotoFile.CopyTo(fileStream);
             }
@@ -44,9 +47,9 @@ namespace Bussiness.Concreters
 
         public void Delete(int id)
         {
-           var oldTeam= _ourTeamRepository.Get(x=> x.Id==id);
-            string path = "C:\\Users\\II novbe\\Desktop\\Mamba\\Mamba\\wwwroot\\Upload\\Service\\";
-            FileInfo file = new FileInfo(path+oldTeam.ImgUrl);
+            var oldTeam = _ourTeamRepository.Get(x => x.Id == id);
+            string path = _webHostEnvironment.WebRootPath + @"\Upload\Service\"+ oldTeam.ImgUrl;
+            FileInfo file = new FileInfo(path );
             if (file.Exists)
             {
                 file.Delete();
@@ -69,12 +72,12 @@ namespace Bussiness.Concreters
 
         public void Update(int id, OurTeam team)
         {
-           var oldTeam= _ourTeamRepository.Get(x => x.Id==id);
-            if (oldTeam== null)
+            var oldTeam = _ourTeamRepository.Get(x => x.Id == id);
+            if (oldTeam == null)
             {
                 throw new NullException("", "Null ola bilmez");
             }
-            if (team.PhotoFile!=null)
+            if (team.PhotoFile != null)
             {
                 if (!team.PhotoFile.ContentType.Contains("image/"))
                 {
@@ -83,7 +86,8 @@ namespace Bussiness.Concreters
                 else
                 {
                     string filename = team.PhotoFile.FileName;
-                    string path = "C:\\Users\\II novbe\\Desktop\\Mamba\\Mamba\\wwwroot\\Upload\\Service\\" + filename;
+                    string path = _webHostEnvironment.WebRootPath + @"\Upload\Service\" + filename;
+
                     using (FileStream fileStream = new FileStream(path, FileMode.Create))
                     {
                         team.PhotoFile.CopyTo(fileStream);
@@ -97,8 +101,8 @@ namespace Bussiness.Concreters
             {
                 team.ImgUrl = oldTeam.ImgUrl;
             }
-            oldTeam.Name= team.Name;
-            oldTeam.Position= team.Position;
+            oldTeam.Name = team.Name;
+            oldTeam.Position = team.Position;
             _ourTeamRepository.commit();
 
         }
